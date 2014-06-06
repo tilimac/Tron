@@ -1,7 +1,7 @@
 <?php
 
 $host = 'localhost'; //host
-$port = '15645'; //port
+$port = $_GET['port']; //port
 $null = NULL; //null var
 
 set_time_limit(0);
@@ -32,14 +32,21 @@ while ($user_message != "stop") {
         $clients[] = $socket_new; //add socket to client array
 
         $header = socket_read($socket_new, 1024); //read data sent by the socket
-        perform_handshaking($header, $socket_new, $host, $port); //perform websocket handshake
+        
+        if($header == "init"){
+            $msg = mask(json_encode(array('aaaa' => 'system', 'test' => 'connected')));
+            @socket_write($socket_new, $msg, strlen($msg));
+        }
+        else {
+            perform_handshaking($header, $socket_new, $host, $port); //perform websocket handshake
 
-        socket_getpeername($socket_new, $ip); //get ip address of connected socket
-        $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' connected'))); //prepare json data
-        send_message($response); //notify all users about new connection
-        //make room for new socket
-        $found_socket = array_search($socket, $changed);
-        unset($changed[$found_socket]);
+            socket_getpeername($socket_new, $ip); //get ip address of connected socket
+            $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' connected'))); //prepare json data
+            send_message($response); //notify all users about new connection
+            //make room for new socket
+            $found_socket = array_search($socket, $changed);
+            unset($changed[$found_socket]);
+        }
     }
 
     //loop through all connected sockets
@@ -54,6 +61,8 @@ while ($user_message != "stop") {
                 $user_name = $tst_msg->name;
                 $user_message = $tst_msg->message; 
                 $user_color = $tst_msg->color;
+                
+                if($user_message == "stop") break 3;
                 
                 $response_text = mask(json_encode(array('type' => 'usermsg', 'name' => $user_name, 'message' => $user_message, 'color' => $user_color)));
             }
@@ -79,7 +88,7 @@ while ($user_message != "stop") {
     }
 }
 // close the listening socket
-socket_close($sock);
+socket_close($socket);
 
 function send_message($msg) {
     global $clients;

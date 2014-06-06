@@ -9,21 +9,25 @@ $(document).ready(function() {
     $("#server").change(function(){
         if($(this).val() == "connect"){
             $("#addrIp").show();
-            $("#port").show();
+            //$("#port").show();
             $("#addrIp input").prop('required',true);
-            $("#port input").prop('required',true);
+            //$("#port input").prop('required',true);
         }
         else{
             $("#addrIp").hide();
-            $("#port").hide();
+            //$("#port").hide();
             $("#addrIp input").val('');
-            $("#port input").val('');
+            //$("#port input").val('');
             $("#addrIp input").prop('required',false);
-            $("#port input").prop('required',false);
+            //$("#port input").prop('required',false);
         }
     });
     
     $("#connectGame").submit(function(){
+        var type = $("#server").val();
+        var port = $("#port").val();
+        
+        if(type == "newServer") window.open("Controller/serverController.php?port="+port);
         /*if($("#server").val() == "null"){
             return false;
         }*/

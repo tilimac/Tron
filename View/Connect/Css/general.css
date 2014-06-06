@@ -20,5 +20,7 @@ and open the template in the editor.
     top: 170px;
     width: 500px;
 }
-
+.errorLog{
+    border: 1px solid red;
+}
 

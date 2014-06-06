@@ -6,12 +6,18 @@
 
 
 $(document).ready(function() {
-    //create a new WebSocket object.
-    var wsUri = "ws://192.168.0.108:15645/server.php";
+    var ip = $("#ip").val();
+    var port = $("#port").val();
+    var wsUri = "ws://"+ip+":"+port+"/Controller/serverController.php";
+    
+    //var wsUri = "ws://192.168.0.108:15645/Controller/serverController.php";
     websocket = new WebSocket(wsUri);
 
     websocket.onopen = function(ev) { // connection is open 
         $('#message_box').append("<div class=\"system_msg\">Connecté !</div>"); //notify user
+        
+        
+        //init(2);
     }
 
     $('#sendMsg').submit(function() { //use clicks message send button	
@@ -42,16 +48,13 @@ $(document).ready(function() {
 
     //#### Message received from server?
     websocket.onmessage = function(ev) {
-        var msg = JSON.parse(ev.data); //PHP sends Json data
-        var type = msg.type; //message type
-        var umsg = msg.message; //message text
-        var uname = msg.name; //user name
-        var ucolor = msg.color; //color
+        var msg = JSON.parse(ev.data);
+        var type = msg.type;
 
         if (type == 'usermsg') {
             
                     //<p><span>Tilimac : </span>aaags dfg sdfg sdfg aaags dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg</p>
-            $('#message_box').append("<p><span style=\"color:#" + ucolor + "\">" + uname + " :</span> " + umsg + "</p>");
+            $('#message_box').append("<p><span style=\"color:#" + msg.color + "\">" + msg.name + " :</span> " + msg.message + "</p>");
             //$('#message_box').append("<div><span class=\"user_name\" style=\"color:#" + ucolor + "\">" + uname + "</span> : <span class=\"user_message\">" + umsg + "</span></div>");
         }
         if (type == 'system') {
@@ -59,6 +62,7 @@ $(document).ready(function() {
         }
         if (type == 'newPos') {
             console.log(msg.id);
+            console.log(msg.dir);
             console.log(msg.dir);
         }
 
@@ -70,7 +74,7 @@ $(document).ready(function() {
         $('#message_box').append("<div class=\"system_error\">Error Occurred - " + ev.data + "</div>");
     };
     websocket.onclose = function(ev) {
-        $('#message_box').append("<div class=\"system_msg\">Connection Closed</div>");
+        $('#message_box').append("<div class=\"system_msg\">Connection Fermé</div>");
     };
 
 
@@ -99,7 +103,6 @@ $(document).ready(function() {
     });
 
 
-    init(2);
 
     function init(nbPlayer){
         var pions = [[5,5,'right'],[44,44,'left'],[5,44,'up'],[44,5,'down']];

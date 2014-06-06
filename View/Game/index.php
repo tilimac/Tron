@@ -20,6 +20,9 @@
     </head>
     <body>
         <input id="color" type="hidden" value="<?php echo $arrayColor[$infoPlayer['color']]; ?>" />
+        <input id="type" type="hidden" value="<?php echo $infoServer['type']; ?>" />
+        <input id="ip" type="hidden" value="<?php echo $infoServer['ip']; ?>" />
+        <input id="port" type="hidden" value="<?php echo $infoServer['port']; ?>" />
         <table>
             <?php for ($i = 0; $i < 50; $i++) { ?>
                 <tr>
