@@ -1,0 +1,24 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 5 juin 2014, 19:37:32
+    Author     : Phoenix
+*/
+
+.connection{
+    background-color: #001B26;
+    border: 3px solid #FFFFFF;
+    box-shadow: 1px 1px 10px #FFFFFF;
+    color: #FFFFFF;
+    left: 50%;
+    margin-left: -250px;
+    padding: 20px;
+    position: absolute;
+    top: 170px;
+    width: 500px;
+}
+
+

@@ -1,0 +1,21 @@
+#tchat
+{
+	width: 100%;
+	height: 80%;
+	border: 1px solid black;
+	position: relative;
+}
+
+#receiveMessages, #sendMessages
+{
+	display: none;
+}
+#connect
+{
+	text-align: center;
+	border: 1px solid red;
+	position: absolute;
+	bottom: 10px;
+	width: 100%;
+	height: 30px;
+}

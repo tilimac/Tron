@@ -1,0 +1,56 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 5 juin 2014, 19:37:32
+    Author     : Phoenix
+*/
+
+@font-face {
+    font-family: "Tron";
+    src: url('../../Library/Font/Tr2n.ttf');
+}
+body{
+    background-image:url('../../Image/fondTron.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: black;
+}
+
+.cache{
+    display: none;
+}
+
+.no-padding{
+    padding: 0;
+}
+.padding{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+
+    /* #E26A6A,#FBE781,#92E26A,#73ECB0,#5CAAD0,#8570EB,#B04CB0 */
+.bgRouge{
+    background-color: #E26A6A;
+}
+.bgJaune{
+    background-color: #FBE781;
+}
+.bgOrange{
+    background-color: #f8ac0c;
+}
+.bgVert{
+    background-color: #73ECB0;
+}
+.bgBleu{
+    background-color: #5CAAD0;
+}
+.bgViolet{
+    background-color: #8570EB;
+}
+.bgRose{
+    background-color: #FB89FB;
+}
