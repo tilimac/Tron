@@ -18,11 +18,18 @@ table{
     background-color: #001B26;
     border: 3px solid white;
     box-shadow: 1px 1px 10px #FFFFFF;
-    border-collapse: collapse;
+    /*border-collapse: collapse;*/
 }
 td{
     border: 1px solid #193138;
     empty-cells: show;
+    width: 1%;
+    height: 1%;
+}
+#commandes{
+    position: absolute;
+    right: 0;
+    padding: 15px;
 }
 .character{
     background-image: url("../../../Image/skins.png");

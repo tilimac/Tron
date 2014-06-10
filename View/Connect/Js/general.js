@@ -27,9 +27,19 @@ $(document).ready(function() {
         var type = $("#server").val();
         var port = $("#port").val();
         
-        if(type == "newServer") window.open("Controller/serverController.php?port="+port);
-        /*if($("#server").val() == "null"){
-            return false;
-        }*/
+        if(type == "newServer") window.open("serverController.php?port="+port);
+        
+        $.ajax({
+            type: "POST",
+            data:$(this).serialize(),
+            url:"clientController.php",
+            dataType: "html",
+            complete:function(data){
+                $('#contentPage').html(data.responseText);
+            }
+        });
+        //$('body').load("clientController.php",$(this).serialize());
+        
+        return false;
     });
 });

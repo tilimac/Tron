@@ -1,0 +1,77 @@
+
+div.audio-player {
+    position: absolute;
+    bottom: 5px;
+}
+
+.mejs-horizontal-volume-slider{
+    position: relative;
+    height: 9px !important;
+}
+
+.mejs-horizontal-volume-total{
+    background-color: #323232;
+    border-radius: 5px;
+    height: 100%;
+    width: 100px;
+    box-shadow: 0 0 5px 1px rgba(50, 50, 50, 0.75);
+}
+
+.mejs-horizontal-volume-current{
+    border: 1px solid #314E57;
+    background: linear-gradient(#00BFFF, #006A9C) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border-radius: 5px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 46px;
+}
+
+.mejs-horizontal-volume-handle{
+    background-color: #00BDFF;
+    border: 6px solid #2A383B;
+    border-radius: 10px;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    width: 20px;
+    margin: -5px;
+}
+
+.mejs-pause button{
+    height: 20px;
+    width: 20px;
+    background: url("../../../Image/pause.png");
+    border: 0;
+}
+.mejs-play button{
+    height: 20px;
+    width: 20px;
+    background: url("../../../Image/play.png");
+    border: 0;
+}
+.mejs-mute button{
+    height: 20px;
+    width: 20px;
+    background: url("../../../Image/mute.png");
+    border: 0;
+}
+.mejs-unmute button{
+    height: 20px;
+    width: 20px;
+    background: url("../../../Image/unmute.png");
+    border: 0;
+}
+.mejs-time-rail{
+    display: none;
+}
+.mejs-button{
+    width: 20px;
+    display: inline-block;
+    margin-left: 10px;
+}
+.mejs-horizontal-volume-slider{
+    display: inline-block;
+    width: 100px;
+    margin-left: 10px;
+}
