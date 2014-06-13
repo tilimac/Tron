@@ -6,7 +6,6 @@ $null = NULL;
 
 set_time_limit(0);
 
-
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
 socket_bind($socket, 0, $port);
@@ -25,10 +24,9 @@ $synchroMove = array(1=>true,2=>true,3=>true,4=>true,5=>true,6=>true);
 $deplacement = array(1=>array('direction'=>'right','living'=>'0'),2=>array('direction'=>'left','living'=>'0'),3=>array('direction'=>'up','living'=>'0'),4=>array('direction'=>'down','living'=>'0'),5=>array('direction'=>'up','living'=>'0'),6=>array('direction'=>'down','living'=>'0'));
 
 $classement = array();
+$startGame = false;
 
-$user_message = "";
-
-while ($user_message != "stop") {
+while (true) {
     $changed = $clients;
     socket_select($changed, $null, $null, 0, 10);
 
@@ -46,7 +44,7 @@ while ($user_message != "stop") {
             perform_handshaking($header, $socket_new, $host, $port);
 
             socket_getpeername($socket_new, $ip);
-            $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' connected')));
+            $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' s\'est connecté')));
             send_message($response);
         }
         $found_socket = array_search($socket, $changed);
@@ -59,14 +57,16 @@ while ($user_message != "stop") {
             $received_text = unmask($buf); //unmask data
             $tst_msg = json_decode($received_text); //json decode 
             if($received_text == ""){//Va etre utilisé pour la fermeture d'une socket en js
-                $response = mask(json_encode(array('type' => 'system', 'message' => '<span style="color:#'.$infoClients[$id]['color'].' ">'.$infoClients[$id]['name'].'</span> s\'est déconnecté')));
+                $response = mask(json_encode(array('type' => 'system', 'message' => '<span style="color:#'.$infoClients[$id/2]['color'].' ">'.$infoClients[$id/2]['name'].'</span> s\'est déconnecté')));
                 send_message($response);
-                $playerAvailable[$infoClients[$id]['num']] = true;
-                $synchroMove[$infoClients[$id]['num']] = true;
-                unset($clients[$id]);
-                unset($infoClients[$id]);
-                $response_text = mask(json_encode(array('type' => 'initPlayer', 'clients' => $infoClients)));
+                $response_text = mask(json_encode(array('type' => 'removePlayer', 'num' => $infoClients[$id/2]['num'])));
                 send_message($response_text);
+                $playerAvailable[$infoClients[$id/2]['num']] = true;
+                $synchroMove[$infoClients[$id/2]['num']] = true;
+                unset($clients[$id]);
+                unset($infoClients[$id/2]);
+                /*$response_text = mask(json_encode(array('type' => 'initPlayer', 'clients' => $infoClients)));
+                send_message($response_text);*/
                 break 2;
             }
             
@@ -76,7 +76,18 @@ while ($user_message != "stop") {
                         break 4;
                     }
                     if($tst_msg->message == "startGame"){
+                        $startGame = true;
                         $response_text = mask(json_encode(array('type' => 'deplacement','infoDeplacement'=>$deplacement)));
+                        send_message($response_text);
+                        break 3;
+                    }
+                    if($tst_msg->message == "initGame"){
+                        for ($index = 1; $index < count($infoClients); $index++) {
+                            $synchroMove[$index] = false;
+                        }
+                        $startGame = false;
+                        $classement = array();
+                        $response_text = mask(json_encode(array('type' => 'initPlayer', 'clients' => $infoClients)));
                         send_message($response_text);
                         break 3;
                     }
@@ -84,18 +95,18 @@ while ($user_message != "stop") {
                     send_message($response_text);
                 break;
                 case 'initPlayer':
-                    $infoClients[$id]['name'] = $tst_msg->name;
-                    $infoClients[$id]['color'] = $tst_msg->color;
-                    $infoClients[$id]['colorName'] = $colors[$tst_msg->color];
+                    $infoClients[$id/2]['name'] = $tst_msg->name;
+                    $infoClients[$id/2]['color'] = $tst_msg->color;
+                    $infoClients[$id/2]['colorName'] = $colors[$tst_msg->color];
                     foreach ($playerAvailable as $num => $available) {
                         if($available){
-                            $infoClients[$id]['num'] = $num;
+                            $infoClients[$id/2]['num'] = $num;
                             $playerAvailable[$num] = false;
                             $synchroMove[$num] = false;
                             break;
                         }
                     }
-                    $infoClients[$id]['pion'] = $playerInfos[$infoClients[$id]['num']];
+                    $infoClients[$id/2]['pion'] = $playerInfos[$infoClients[$id/2]['num']];
                     $response_text = mask(json_encode(array('type' => 'initPlayer', 'clients' => $infoClients)));
                     send_message($response_text);
                 break;
@@ -103,23 +114,25 @@ while ($user_message != "stop") {
                     $synchroMove[$tst_msg->numPlayer] = true;
                     $deplacement[$tst_msg->numPlayer]['direction'] = $tst_msg->dirPlayer;
                     $deplacement[$tst_msg->numPlayer]['living'] = $tst_msg->living;
-                    if($tst_msg->living == "0" && !in_array($tst_msg->numPlayer, $classement)){
-                        $classement[] = $tst_msg->numPlayer;
+                    if($tst_msg->living == "0" && !in_array_r($infoClients[$tst_msg->numPlayer]['name'], $classement)){
+                        $response_text = mask(json_encode(array('type' => 'removePlayer', 'num' => $infoClients[$tst_msg->numPlayer]['num'])));
+                        send_message($response_text);
+                        $infoCasssement = array();
+                        $infoCasssement['name'] = $infoClients[$tst_msg->numPlayer]['name'];
+                        $infoCasssement['color'] = $infoClients[$tst_msg->numPlayer]['color'];
+                        $classement[] = $infoCasssement;
                     }
-                    //var_dump($classement);
-                    $deplaceAll = true;
                     
+                    $deplaceAll = true;
                     foreach ($synchroMove as $numPlayer => $validMove) {
                         if(!$validMove){
                             $deplaceAll = false;
                         }
                     }
-                    
-                    if($deplaceAll){
+                    if($deplaceAll && $startGame){
                         if(count($classement)<(count($infoClients)-2)){
                             $response_text = mask(json_encode(array('type' => 'deplacement','infoDeplacement'=>$deplacement)));
-                            //sleep(1);
-                            usleep(500000);//Vitesse de déplacement
+                            usleep(100000);//Vitesse de déplacement (0.1 sec)
                             send_message($response_text);
                             for ($index = 1; $index < count($infoClients); $index++) {
                                 $synchroMove[$index] = false;
@@ -128,21 +141,18 @@ while ($user_message != "stop") {
                         else{
                             //$infoClients[$id]['num']
                             foreach ($infoClients as $client) {
-                                if(is_array($client) && !in_array($client['num'], $classement))
-                                    $classement[] = $client['num'];
+                                if(is_array($client) && !in_array_r($client['name'], $classement)){
+                                    $infoCasssement = array();
+                                    $infoCasssement['name'] = $client['name'];
+                                    $infoCasssement['color'] = $client['color'];
+                                    $classement[] = $infoCasssement;
+                                }
                             }
-                            
                             $response_text = mask(json_encode(array('type' => 'classement','classement'=>array_reverse($classement))));
                             send_message($response_text);
                         }
                     }
                 break;
-                /*case 'direction':
-                    $user_id = $tst_msg->id;
-                    $user_dir = $tst_msg->dir;
-                    $response_text = mask(json_encode(array('type' => 'direction', 'id' => $user_id, 'dir' => $user_dir)));
-                    send_message($response_text);
-                break;*/
             }
             break 2;
         }
@@ -226,4 +236,14 @@ function perform_handshaking($receved_header, $client_conn, $host, $port) {
             "WebSocket-Location: ws://$host:$port/demo/shout.php\r\n" .
             "Sec-WebSocket-Accept:$secAccept\r\n\r\n";
     socket_write($client_conn, $upgrade, strlen($upgrade));
+}
+
+function in_array_r($needle, $haystack, $strict = false) {
+    foreach ($haystack as $item) {
+        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))) {
+            return true;
+        }
+    }
+
+    return false;
 }

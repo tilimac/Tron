@@ -38,6 +38,14 @@ $(document).ready(function() {
         websocket.send(JSON.stringify(msg));
     });
 
+    $('#initGame').click(function() {
+        var msg = {
+            type: 'message',
+            message: 'initGame'
+        };
+        websocket.send(JSON.stringify(msg));
+    });
+
     $('#sendMsg').submit(function() { //use clicks message send button	
         var mymessage = $('#message').val(); //get message text
         var myname = $('#name').val(); //get user name
@@ -70,15 +78,10 @@ $(document).ready(function() {
         var msg = JSON.parse(ev.data);
         var type = msg.type;
 
-        //console.log(type);
         if (type == 'message') {
-            
-                    //<p><span>Tilimac : </span>aaags dfg sdfg sdfg aaags dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg dfg sdfg sdfg</p>
             $('#message_box').append("<p><span style=\"color:#" + msg.color + "\">" + msg.name + " :</span> " + msg.message + "</p>");
-            //$('#message_box').append("<div><span class=\"user_name\" style=\"color:#" + ucolor + "\">" + uname + "</span> : <span class=\"user_message\">" + umsg + "</span></div>");
         }
         if (type == 'initPlayer') {
-            console.log('initPlayer');
             $('td').removeClass();
             $.each(msg.clients, function(index, client) {
                 if(client != ""){
@@ -87,18 +90,15 @@ $(document).ready(function() {
                         $("#name").data('dir',client.pion.dir);
                         $("#name").data('living','1');
                     }
-                    //console.log($("#plateau tr:eq("+client.pion.y+") td:eq("+client.pion.y+")"));
+                    
                     $("#plateau tr:eq("+client.pion.y+") td:eq("+client.pion.x+")").addClass('used').addClass(client.colorName).addClass("numC_"+client.num).addClass('currentPion').data('color',client.colorName).data('x',client.pion.x).data('y',client.pion.y);
                 }
             });
         }
         if (type == 'system') {
             $('#message_box').append("<div class=\"system_msg\">" + msg.message + "</div>");
-            //console.log(msg.clients);
         }
         if (type == 'deplacement') {
-            console.log('test');
-            
             var myNum = $("#name").data('num');
             var myLife = $("#name").data('living');
             
@@ -128,7 +128,7 @@ $(document).ready(function() {
                     }
                     else if(numPlayer == myNum){
                         myLife = '0';
-                        console.log('Je suis mort en : x='+x+' y='+y);
+                        //console.log('Je suis mort en : x='+x+' y='+y);
                     }
                 }
             });
@@ -142,20 +142,29 @@ $(document).ready(function() {
                 living: myLife
             };
             
-            //setTimeout(function() {
-                websocket.send(JSON.stringify(msgServ));
-            //}, 1000);
-            
-            
+            websocket.send(JSON.stringify(msgServ));
         }
         if (type == 'classement') {
-            $.each(msg.classement, function(position, numPlayer) {
+            
+            if(msg.classement[0].name == name){
+                var test = '<p style="text-align: center; font-size: 30px; font-weight: bold; color: green;">Victoire</p>';
+            }
+            else{
+                var test = '<p style="text-align: center; font-size: 30px; font-weight: bold; color: red;">Défaite</p>';
+            }
+            test += '<p>Voici le classement : </p><ol>';
+            $.each(msg.classement, function(position, pos) {
+                if(name != 'null') test += '<li style="color:'+pos.color+';">'+pos.name+'</li>';
             });
-            alert("C'est fini !!! Gagnant : player "+msg.classement[0]);
+            test += '</ol>';
+            $("#classement .modal-body").html(test);
+            $("#classement").modal('show');
         }
-
-
-        //
+        if (type == 'removePlayer') {
+            console.log("td.numC_"+msg.num);
+            console.log($("td.numC_"+msg.num));
+            $("td.numC_"+msg.num).removeClass();
+        }
     };
 
     websocket.onerror = function(ev) {
@@ -213,7 +222,6 @@ $(document).ready(function() {
                 }
             }
             $("#name").data('dir',newDir);
-            console.log($("#name").data('dir'));
         }
     });
 

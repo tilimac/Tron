@@ -12,7 +12,7 @@
     </head>
     <body>
         <div class="audio-player">
-            <audio id="audio-player" src="Library/mediaelement/media/daft4.mp3" autoplay loop controls></audio>
+<!--            <audio id="audio-player" src="Library/mediaelement/media/daft4.mp3" autoplay loop controls></audio>-->
         </div><!-- @end .audio-player -->
         <script>
         $(function(){

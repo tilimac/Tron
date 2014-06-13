@@ -27,6 +27,7 @@
 <div class="character"><?php echo $infoPlayer['pseudo']; ?></div>
 <?php if($infoServer['type'] == "newServer"){ ?>
     <div id="commandes" class="btn-group">
+        <button id="initGame" class="btn btn-default">Init le jeu</button>
         <button id="startGame" class="btn btn-default">Démarer le jeu</button>
         <button id="stopSrv" class="btn btn-default">Arreter le serveur</button>
     </div>
@@ -44,3 +45,19 @@
         </div>
     </form>
 </div>
+
+<div id="classement" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Classement</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

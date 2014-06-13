@@ -53,7 +53,7 @@
                 <input id="ip3" name="ip[]" type="number" class="form-control" min="0" max="255" maxlength="3" required value="0"/>
             </div>
             <div class="col-sm-3 no-padding">
-                <input id="ip4" name="ip[]" type="number" class="form-control" min="0" max="255" maxlength="3" required value="31"/>
+                <input id="ip4" name="ip[]" type="number" class="form-control" min="0" max="255" maxlength="3" required value="104"/>
             </div>
         </div>
     </div>
